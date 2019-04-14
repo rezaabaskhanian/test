@@ -35,6 +35,12 @@ import Faramoshi from '../Faramoshi/Faramoshi'
 
 const {width, height} = Dimensions.get("window");
 
+const baseUrl = 'http://nbcompany.ir/40cart/';
+const baseHeaders = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+};
+
 
 export default class register extends Component {
 
@@ -44,32 +50,69 @@ export default class register extends Component {
         this.state = {
             username: '',
             password: '',
-
+            headers:[]
         }
+
     }
-    login=()=> {
-        const {username,password}=this.state
 
-          fetch('http://humyasa.com/40cart/oauth2/token', {
-              method: 'POST',
-              headers: {
-                  Accept: 'application/json',
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                  username:username,
+    curl(url, data, method ='GET') {
+        console.log(url)
+        console.log(data)
+        console.log(method)
+        console.log('reza')
+        console.log(this.headers())
 
-                  /*
-                  password:password
-                  */
-              })
-          })
-          .then((response)=>response.json())
-.then((responseJson) => {
-       alert(responseJson.data)
-    })
-        .catch((error) => {
-            alert(error) ;
+        return fetch(url, {
+            method: method,
+            headers:this.headers() ,
+            body: JSON.stringify(data)
+        })
+            .then((response) => response.json())
+            .then((responseJson) => {
+                return responseJson;
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+
+    }
+
+    setUrl(url) {
+        return baseUrl + url
+    }
+
+    headers() {
+
+        return baseHeaders + this.state.headers  //headers set in functions
+    }
+
+    login = () => {
+
+        const {username, password} = this.state
+
+
+        let url = this.setUrl('oauth2/token')
+
+        let data = {
+            username: username,
+            password: password,
+            client_id: 'phone_app',
+            client_secret: '3rdgd07b5a',
+            scope: '',
+            grant_type: 'password',
+        }
+
+
+        let data1 = this.curl(url, data, 'POST')
+console.log(data1)
+
+        // this.curl()
+        //
+        //     .then((responseJson) => {
+        //         console.log(responseJson)
+        //     })
+        //     .catch((error) => {
+        //         console.log(error);
         /*
         .then((res)=>{
             if (res.success===true){
@@ -85,13 +128,11 @@ export default class register extends Component {
                 alert(res.message)
             }
             */
-              })
-    /*
-              .done();
-              */
-      }
-
-
+        // })
+        /*
+                  .done();
+                  */
+    }
 
 
     render() {
@@ -149,16 +190,16 @@ export default class register extends Component {
                                 /*
                               value={this.state.username}
                               */
-                   />
+                            />
 
 
-                   <TextInput style={styles.Name} underlineColorAndroid={'transparent'} placeholder="رمز ورود"
-                              placeholderTextColor='black' autoCapitalize="none"
-                              onChangeText={(password) => this.setState({password})}
+                            <TextInput style={styles.Name} underlineColorAndroid={'transparent'} placeholder="رمز ورود"
+                                       placeholderTextColor='black' autoCapitalize="none"
+                                       onChangeText={(password) => this.setState({password})}
 
-                       /*
-                value={this.state.password}
-*/
+                                /*
+                         value={this.state.password}
+         */
 
                             />
 
