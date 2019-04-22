@@ -7,7 +7,7 @@ import {
     StyleSheet,
     TextInput,
     KeyboardAvoidingView,
-    ImageBackground, TouchableOpacity, Dimensions,Alert
+    ImageBackground, TouchableOpacity, Dimensions, Alert,ToastAndroid
 } from 'react-native';
 
 import {
@@ -29,6 +29,7 @@ import {
 import sabt from './sabt'
 
 
+
 import FontAwesome, {Icons} from 'react-native-fontawesome';
 import Faramoshi from '../Faramoshi/Faramoshi'
 
@@ -45,18 +46,15 @@ const baseHeaders = {
 export default class register extends Component {
 
 
-
-
-
-        constructor(props) {
-            super(props);
-            this.state = {
+    constructor(props) {
+        super(props);
+        this.state = {
             username: '',
             password: '',
-                typedText:'',
+            typedText: '',
         }
 
-        }
+    }
 
     /*
 
@@ -191,36 +189,32 @@ console.log(data1)
                             </Text>
 
 
+                            <TextInput style={styles.Name} underlineColorAndroid={'transparent'}
+                                       placeholder="نام کاربری"
+                                       placeholderTextColor='black'
+                                       onChangeText={(username) => this.setState({username})}
+                                       onFocus={() => this.setState({username: ''})}
+                                       value={this.state.username}
 
 
-                                <TextInput style={styles.Name} underlineColorAndroid={'transparent'}
-                                           placeholder="نام کاربری"
-                                           placeholderTextColor='black'
-                                           onChangeText={(username) => this.setState({ username})}
-                                           onFocus= {() => this.setState({username : ''})}
-                                           value={this.state.username}
-
-
-                                />
+                            />
 
                             {!!this.state.nameError1 && (
-                                <Text style={{color:'#ff3d29'}}>{this.state.nameError1}</Text>)}
+                                <Text style={{color: '#ff3d29'}}>{this.state.nameError1}</Text>)}
 
 
+                            <TextInput style={styles.Name} underlineColorAndroid={'transparent'} placeholder="رمز ورود"
+                                       placeholderTextColor='black' autoCapitalize="none"
+                                       onChangeText={(password) => this.setState({password})}
+                                       onFocus={() => this.setState({password: ''})}
+                                       value={this.state.password}
+                                       secureTextEntry={true}
 
 
-                                <TextInput style={styles.Name}  underlineColorAndroid={'transparent'} placeholder="رمز ورود"
-                                           placeholderTextColor='black' autoCapitalize="none"
-                                           onChangeText={(password) => this.setState({ password})}
-                                           onFocus= {() => this.setState({password : ''})}
-                                           value={this.state.password}
-                                           secureTextEntry={true}
-
-
-                                />
+                            />
 
                             {!!this.state.nameError && (
-                                <Text style={{color:'#ff2a27'}}>{this.state.nameError}</Text>)}
+                                <Text style={{color: '#ff2a27'}}>{this.state.nameError}</Text>)}
 
                             <CardItem style={{justifyContent: 'center'}}>
                                 <Button style={styles.btnWorod} onPress={this.login}>
@@ -248,25 +242,83 @@ console.log(data1)
     }
 
 
-    login=()=> {
-
-
-        if (this.state.username.trim()  === "") {
-
-
-            this.setState(() => ({ nameError1: "نام کاربری را بنویسید"}));
+    login = () => {
+        if (this.state.username.trim() === "") {
+            this.setState(() => ({nameError1: "نام کاربری را بنویسید"}));
         } else {
-            this.setState(() => ({ nameError1: null}));
+            this.setState(() => ({nameError1: null}));
 
         }
-        if (this.state.password.trim()  === "") {
-            this.setState(() => ({ nameError: "پسورد نمی تواند خالی باشد"}));
+         if (this.state.password.trim() === "") {
+            this.setState(() => ({nameError: "پسورد نمی تواند خالی باشد"}));
         } else {
-            this.setState(() => ({ nameError: null}));
+            this.setState(() => ({nameError: null}));
         }
+
+
+        this.requestLoginFromApi()
     }
 
 
+    async requestLoginFromApi() {
+
+
+        try {
+
+            let response = await  fetch('http://nbcompany.ir/40cart/oauth2/token', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify({
+
+                    username: this.state.username,
+                    password: this.state.password,
+                    client_id: 'phone_app',
+                    client_secret: '3rdgd07b5a',
+                    scope: '',
+                    grant_type: 'password',
+
+                })
+            });
+
+
+
+            let json = await response.json();
+
+            if (json.token_type='Bearer'){
+                this.setDataUser(json.access_token)
+            }
+
+
+            else if (json.status = 401) {
+                alert('نام کاربری یا اسم رمز اشتباه است')
+            }
+
+
+
+        } catch (error) {
+            console.log(error)
+
+
+        }
+
+    }
+
+    async setDataUser(access_token) {
+        try {
+await AsyncStorage.setItem('apiToken',access_token)
+            this.props.navigation.goBack()
+            ToastAndroid.show('به دیوونه خونه خوش آمدید', ToastAndroid.LONG);
+
+        }
+        catch (error) {
+            console.log(error)
+        }
+
+    }
 
 }
 

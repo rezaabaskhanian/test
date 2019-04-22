@@ -62,11 +62,14 @@ export default class main extends Component {
 
 
     componentWillMount() {
+AsyncStorage.getItem('apiToken',(error,result)=>
+{console.log(result)})
+
 
         fetch('http://nbcompany.ir/40cart/api/product',{
             method: 'GET',
             headers: {
-                Authorization:'Bearer 73bf605e4ce866be06a90964d75bfe2c191de35d',
+                Authorization:'Bearer bc281d4e539d57411cca0061573e4b7e18cd8fda',
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
             }
@@ -74,6 +77,7 @@ export default class main extends Component {
 
             .then((response)=>response.json())
             .then((responseJson) => {
+                console.log(responseJson)
                 this.setState({
                     products:responseJson.data
                 })
