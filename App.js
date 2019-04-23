@@ -328,6 +328,8 @@ const styles = StyleSheet.create({
 
 const App = createStackNavigator(
     {
+
+
         Home: {
 
             screen: App1,
@@ -346,6 +348,7 @@ const App = createStackNavigator(
 
             screen: derawer,
 
+
             navigationOptions: () => ({
 
 
@@ -353,6 +356,17 @@ const App = createStackNavigator(
             }),
 
         },
+
+
+        Main1:{
+            screen: Main,
+
+            navigationOptions: () => ({
+                header: null,
+
+            })
+        },
+
 
         chehel: {
             screen: Last,
